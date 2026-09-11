@@ -11,6 +11,7 @@
       padding: 0;
       font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
     }
+
     body {
       background: radial-gradient(circle at top left, #1a1c29, #0e1017);
       display: flex;
@@ -20,6 +21,7 @@
       padding: 20px;
       color: #e2e8f0;
     }
+
     .form-container {
       background: rgba(22, 27, 38, 0.75);
       backdrop-filter: blur(16px);
@@ -31,6 +33,7 @@
       width: 100%;
       max-width: 480px;
     }
+
     .form-container h2 {
       color: #ffffff;
       font-size: 24px;
@@ -39,12 +42,14 @@
       text-align: center;
       letter-spacing: -0.5px;
     }
+
     .form-container p {
       color: #94a3b8;
       font-size: 14px;
       margin-bottom: 20px;
       text-align: center;
     }
+
     .timer-box {
       background: rgba(56, 189, 248, 0.08);
       border: 1px solid rgba(56, 189, 248, 0.2);
@@ -56,9 +61,11 @@
       color: #38bdf8;
       font-weight: 500;
     }
+
     .form-group {
       margin-bottom: 20px;
     }
+
     .form-group label {
       display: block;
       margin-bottom: 8px;
@@ -68,6 +75,7 @@
       text-transform: uppercase;
       letter-spacing: 0.5px;
     }
+
     .form-group input[type="text"],
     .form-group input[type="email"],
     .form-group input[type="file"] {
@@ -80,20 +88,24 @@
       color: #f8fafc;
       transition: all 0.25s ease;
     }
+
     .form-group input[type="text"]::placeholder,
     .form-group input[type="email"]::placeholder {
       color: #64748b;
     }
+
     .form-group input:focus {
       outline: none;
       border-color: #38bdf8;
       box-shadow: 0 0 0 3px rgba(56, 189, 248, 0.15);
       background: rgba(15, 23, 42, 0.9);
     }
+
     .form-group input[type="file"] {
       padding: 10px;
       cursor: pointer;
     }
+
     .form-group input[type="file"]::file-selector-button {
       background: #1e293b;
       color: #38bdf8;
@@ -105,10 +117,12 @@
       font-weight: 600;
       transition: all 0.2s;
     }
+
     .form-group input[type="file"]::file-selector-button:hover {
       background: #334155;
       color: #ffffff;
     }
+
     .submit-btn {
       width: 100%;
       background: linear-gradient(135deg, #0284c7, #2563eb);
@@ -123,39 +137,44 @@
       box-shadow: 0 4px 15px rgba(37, 99, 235, 0.3);
       margin-top: 10px;
     }
-    .submit-btn:hover {
+
+    .submit-btn:hover:not(:disabled) {
       transform: translateY(-1px);
       box-shadow: 0 6px 20px rgba(37, 99, 235, 0.45);
       background: linear-gradient(135deg, #0369a1, #1d4ed8);
     }
+
     .submit-btn:disabled {
       opacity: 0.6;
       cursor: not-allowed;
       transform: none;
     }
+
     #status-msg {
       margin-top: 18px;
       text-align: center;
       font-weight: 500;
       font-size: 14px;
+      min-height: 20px;
     }
+
     .success { color: #4ade80; }
     .error { color: #f87171; }
+    .loading { color: #38bdf8; }
   </style>
 </head>
-<body>
 
+<body>
   <div class="form-container">
     <h2>Submit Assignment</h2>
     <p>Upload your ZIP project file below</p>
-    
-    <!-- Live Countdown Timer Box -->
+
     <div class="timer-box" id="timerDisplay">Calculations loading...</div>
 
     <form id="assignmentForm">
       <div class="form-group">
         <label for="name">Student Name</label>
-        <input type="text" id="name" name="name" placeholder="Enter your full name" required>
+        <input type="text" id="name" name="name" placeholder="Enter your full name" autocomplete="name" required>
       </div>
 
       <div class="form-group">
@@ -165,35 +184,33 @@
 
       <div class="form-group">
         <label for="email">Email Address</label>
-        <input type="email" id="email" name="email" placeholder="student@example.com" required>
+        <input type="email" id="email" name="email" placeholder="student@example.com" autocomplete="email" required>
       </div>
 
       <div class="form-group">
-        <label for="zipFile">Assignment File (ZIP Only)</label>
-        <input type="file" id="zipFile" name="data" accept=".zip, .rar, .7z, application/zip, application/x-zip-compressed" required>
+        <label for="zipFile">Assignment File</label>
+        <input type="file" id="zipFile" name="data" accept=".zip,.rar,.7z,application/zip,application/x-zip-compressed" required>
       </div>
 
       <button type="submit" class="submit-btn" id="btn">Submit Assignment</button>
     </form>
 
-    <div id="status-msg"></div>
+    <div id="status-msg" aria-live="polite"></div>
   </div>
 
   <script>
-    const WEBHOOK_URL = "https://main123.app.n8n.cloud/webhook/submit-assignment";
+    const WEBHOOK_URL = "https://n8n.srv1592446.hstgr.cloud/webhook/submit-assignment";
 
-    // Function to calculate upcoming Monday at 9:45 AM automatically
     function getDeadline() {
       const now = new Date();
       const result = new Date(now);
-      const day = now.getDay(); // 0 = Sun, 1 = Mon, ...
-      
-      // Calculate days until next Monday
+      const day = now.getDay();
       let diff = (1 + 7 - day) % 7;
+
       if (diff === 0 && (now.getHours() > 9 || (now.getHours() === 9 && now.getMinutes() >= 45))) {
-        diff = 7; // If today is Monday past 9:45 AM, target next Monday
+        diff = 7;
       }
-      
+
       result.setDate(now.getDate() + diff);
       result.setHours(9, 45, 0, 0);
       return result;
@@ -201,21 +218,21 @@
 
     const deadline = getDeadline();
 
-    // Update Countdown Timer every second
-    const timerInterval = setInterval(function() {
+    const timerEl = document.getElementById("timerDisplay");
+    const btn = document.getElementById("btn");
+    const status = document.getElementById("status-msg");
+    const form = document.getElementById("assignmentForm");
+    const fileInput = document.getElementById("zipFile");
+
+    function updateTimer() {
       const now = new Date().getTime();
       const distance = deadline.getTime() - now;
 
-      const timerEl = document.getElementById('timerDisplay');
-      const btn = document.getElementById('btn');
-
-      if (distance < 0) {
-        clearInterval(timerInterval);
+      if (distance <= 0) {
         timerEl.innerText = "❌ Deadline Passed (Closed)";
         timerEl.style.color = "#f87171";
         timerEl.style.borderColor = "rgba(248, 113, 113, 0.3)";
         btn.disabled = true;
-        btn.style.pointerEvents = "none";
         btn.innerText = "Submission Closed";
         return;
       }
@@ -226,58 +243,104 @@
       const seconds = Math.floor((distance % (1000 * 60)) / 1000);
 
       timerEl.innerText = `⏳ Time left: ${days}d ${hours}h ${minutes}m ${seconds}s`;
-    }, 1000);
+    }
 
-    // Form submission handler
-    document.getElementById('assignmentForm').addEventListener('submit', async function(e) {
+    updateTimer();
+    setInterval(updateTimer, 1000);
+
+    fileInput.addEventListener("change", function () {
+      const file = fileInput.files[0];
+      if (!file) return;
+
+      const fileName = file.name.toLowerCase();
+      const allowedExtensions = [".zip", ".rar", ".7z"];
+      const valid = allowedExtensions.some(ext => fileName.endsWith(ext));
+
+      if (!valid) {
+        status.innerText = "❌ Please upload a ZIP, RAR, or 7Z file.";
+        status.className = "error";
+        fileInput.value = "";
+        return;
+      }
+
+      status.innerText = "";
+      status.className = "";
+    });
+
+    form.addEventListener("submit", async function (e) {
       e.preventDefault();
+      status.innerText = "";
+      status.className = "";
 
-      const status = document.getElementById('status-msg');
       const now = new Date();
-
-      if (now > deadline) {
+      if (now >= deadline) {
         status.innerText = "❌ Submission closed! Deadline has passed.";
+        status.className = "error";
+        btn.disabled = true;
+        btn.innerText = "Submission Closed";
+        return;
+      }
+
+      const file = fileInput.files[0];
+      if (!file) {
+        status.innerText = "❌ Please select your assignment file.";
         status.className = "error";
         return;
       }
 
-      const btn = document.getElementById('btn');
-      
       btn.innerText = "Uploading... Please wait";
       btn.disabled = true;
       btn.style.pointerEvents = "none";
-      status.innerText = "";
-      status.className = "";
+
+      status.innerText = "⏳ Uploading assignment...";
+      status.className = "loading";
 
       const formData = new FormData();
-      formData.append('name', document.getElementById('name').value);
-      formData.append('rollNo', document.getElementById('rollNo').value);
-      formData.append('email', document.getElementById('email').value);
-      formData.append('data', document.getElementById('zipFile').files[0]);
+      formData.append("name", document.getElementById("name").value.trim());
+      formData.append("rollNo", document.getElementById("rollNo").value.trim());
+      formData.append("email", document.getElementById("email").value.trim());
+      formData.append("data", file);
 
       try {
-        await fetch(WEBHOOK_URL, {
-          method: 'POST',
+        const response = await fetch(WEBHOOK_URL, {
+          method: "POST",
           body: formData
         });
 
+        if (!response.ok) {
+          throw new Error(`Server error: ${response.status}`);
+        }
+
+        // Successfully received a 2xx response from n8n
         status.innerText = "✨ Assignment submitted successfully!";
         status.className = "success";
-        document.getElementById('assignmentForm').reset();
+        form.reset();
+        btn.innerText = "Submitted ✓";
+
+        setTimeout(function () {
+          if (new Date() < deadline) {
+            btn.innerText = "Submit Assignment";
+            btn.disabled = false;
+            btn.style.pointerEvents = "auto";
+          }
+        }, 2000);
 
       } catch (err) {
-        status.innerText = "✨ Assignment submitted successfully!";
-        status.className = "success";
-        document.getElementById('assignmentForm').reset();
-      } finally {
+        console.error("Assignment submission error:", err);
+        status.innerText = "❌ Assignment submission failed. Please try again.";
+        status.className = "error";
+
         if (new Date() < deadline) {
-          btn.innerText = "Submit Assignment";
+          btn.innerText = "Try Again";
           btn.disabled = false;
           btn.style.pointerEvents = "auto";
+        } else {
+          btn.innerText = "Submission Closed";
+          btn.disabled = true;
+          btn.style.pointerEvents = "none";
         }
       }
     });
   </script>
-
 </body>
 </html>

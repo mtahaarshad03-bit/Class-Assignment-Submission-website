@@ -1,0 +1,501 @@
+{
+  "name": "My workflow (Fixed Final)",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "submit-assignment",
+        "options": {
+          "allowedOrigins": "*"
+        }
+      },
+      "id": "3d8e9ce1-d04f-4a90-aeec-501846a9fd25",
+      "name": "Webhook",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 1.1,
+      "position": [
+        0,
+        0
+      ],
+      "webhookId": "0dc05ba0-04bf-4ee6-b6b9-7c742412333e"
+    },
+    {
+      "parameters": {
+        "resource": "fileFolder",
+        "queryString": "={{ $('Webhook').item.json.body.rollNo + '_' + $('Webhook').item.json.body.name }}",
+        "filter": {
+          "folderId": {
+            "__rl": true,
+            "value": "1Nibs-qWmj8Lw2AYt-_slD0Ez4YHFKnMK",
+            "mode": "list",
+            "cachedResultName": "Class Assignment Folder",
+            "cachedResultUrl": "https://drive.google.com/drive/folders/1Nibs-qWmj8Lw2AYt-_slD0Ez4YHFKnMK"
+          }
+        },
+        "options": {}
+      },
+      "id": "12b9cfef-7a05-41f6-b148-9c5ddf5d0e62",
+      "name": "Search files and folders",
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        416,
+        0
+      ],
+      "alwaysOutputData": true,
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "NHLEz5UJFsUrvIxM",
+          "name": "Google Drive account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "4bac0af0-f404-46de-943a-8ad775d84fb7",
+              "leftValue": "={{ $('Search files and folders').item.json.id ? 'found' : '' }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "notEmpty",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "19067018-7ae5-430d-bd26-759dea8ac447",
+      "name": "If",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        624,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "name": "={{ $('Webhook').item.json.body.rollNo + '_' + $('Webhook').item.json.body.name + '.zip' }}",
+        "driveId": {
+          "__rl": true,
+          "mode": "list",
+          "value": "My Drive",
+          "cachedResultName": "My Drive",
+          "cachedResultUrl": "https://drive.google.com/drive/my-drive"
+        },
+        "folderId": {
+          "__rl": true,
+          "value": "={{ $('Search files and folders').item.json.id || $('Create Student Folder').item.json.id }}",
+          "mode": "id"
+        },
+        "options": {}
+      },
+      "id": "7b767b18-68ce-4267-af4f-64f88f430e61",
+      "name": "Upload Assignment ZIP",
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        1072,
+        0
+      ],
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "NHLEz5UJFsUrvIxM",
+          "name": "Google Drive account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "1Jd3Id9X616sDiXbM08iXJ7kkvpOeSOxFXSy6T1WeA0s",
+          "mode": "list",
+          "cachedResultName": "Class Web Assignment Report",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1Jd3Id9X616sDiXbM08iXJ7kkvpOeSOxFXSy6T1WeA0s/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1Jd3Id9X616sDiXbM08iXJ7kkvpOeSOxFXSy6T1WeA0s/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Name ": "={{ $('Edit Fields').item.json.body.name }}",
+            "Roll No": "={{ $('Edit Fields').item.json.body.rollNo }}",
+            "Folder Link": "={{ $('Upload Assignment ZIP').item.json.webViewLink }}",
+            "Email": "={{ $('Edit Fields').item.json.body.email }}",
+            "Status": "Submitted"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "Name ",
+              "displayName": "Name ",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Roll No",
+              "displayName": "Roll No",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Folder Link",
+              "displayName": "Folder Link",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Email",
+              "displayName": "Email",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Status",
+              "displayName": "Status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "id": "0b7c56b6-16ad-4eb5-82f9-86fa2f948f09",
+      "name": "Update Google Sheet",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4,
+      "position": [
+        1344,
+        0
+      ],
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "FHu3nlSQbi78jBvO",
+          "name": "Google Sheets account 3"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "sendTo": "={{ $('Webhook').item.json.body.email }}",
+        "subject": "=Assignment Submission Confirmed - {{ $json['Name '] }} - {{ $json['Roll No'] }}",
+        "message": "=<div style=\"font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #0f172a; padding: 30px; border-radius: 12px; color: #f8fafc; max-width: 600px; margin: 0 auto; border: 1px solid #334155;\">   <div style=\"text-align: center; padding-bottom: 20px; border-bottom: 1px solid #334155;\">     <h2 style=\"color: #38bdf8; margin: 0; font-size: 24px;\">🎉 Assignment Received!</h2>     <p style=\"color: #94a3b8; margin-top: 5px; font-size: 14px;\">Your submission has been safely logged in our system.</p>   </div>      <div style=\"padding: 20px 0;\">     <p style=\"font-size: 15px; color: #cbd5e1; margin-bottom: 15px;\">Hello <b>{{ $('Webhook').item.json.body.name }}</b>,</p>     <p style=\"font-size: 14px; color: #cbd5e1; line-height: 1.6;\">Thank you for submitting your project. We have successfully received your assignment file and recorded your submission details.</p>          <div style=\"background-color: #1e293b; padding: 18px; border-radius: 8px; margin: 20px 0; border-left: 4px solid #38bdf8;\">       <p style=\"margin: 4px 0; font-size: 14px;\"><b>Student Name:</b> {{ $('Webhook').item.json.body.name }}</p>       <p style=\"margin: 4px 0; font-size: 14px;\"><b>Roll Number:</b> {{ $('Webhook').item.json.body.rollNo }}</p>       <p style=\"margin: 4px 0; font-size: 14px;\"><b>Status:</b> <span style=\"color: #4ade80; font-weight: bold;\">Verified & Saved</span></p>     </div>   </div>    <div style=\"text-align: center; border-top: 1px solid #334155; padding-top: 20px; color: #64748b; font-size: 12px;\">     <p>This is an automated notification. Please do not reply directly to this email.</p>   </div> </div>",
+        "options": {}
+      },
+      "id": "79b53915-eb6f-4573-a4e7-3c64f9904ffd",
+      "name": "Send a message",
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        1616,
+        0
+      ],
+      "webhookId": "f202ddea-d09d-4f1b-800e-f4cd4bbe4a39",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "71QnetDkolFRyEtJ",
+          "name": "Gmail account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "folder",
+        "name": "={{ $('Webhook').item.json.body.rollNo }}",
+        "driveId": {
+          "__rl": true,
+          "value": "My Drive",
+          "mode": "list",
+          "cachedResultName": "My Drive",
+          "cachedResultUrl": "https://drive.google.com/drive/my-drive"
+        },
+        "folderId": {
+          "__rl": true,
+          "value": "1Nibs-qWmj8Lw2AYt-_slD0Ez4YHFKnMK",
+          "mode": "list",
+          "cachedResultName": "Class Assignment Folder",
+          "cachedResultUrl": "https://drive.google.com/drive/folders/1Nibs-qWmj8Lw2AYt-_slD0Ez4YHFKnMK"
+        },
+        "options": {}
+      },
+      "id": "0dd08beb-ca45-4b99-b054-0e71667c081c",
+      "name": "Create Student Folder",
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        848,
+        112
+      ],
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "NHLEz5UJFsUrvIxM",
+          "name": "Google Drive account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "sendTo": "mtahaarshad03@gmail.com",
+        "subject": "={{ \"New Submission: \" + $('Webhook').item.json.body.name + \" (\" + $('Webhook').item.json.body.rollNo + \")\" }}",
+        "message": "=<div style=\"font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #0f172a; padding: 30px; border-radius: 12px; color: #f8fafc; max-width: 600px; margin: 0 auto; border: 1px solid #334155;\">\n  <div style=\"text-align: center; padding-bottom: 20px; border-bottom: 1px solid #334155;\">\n    <h2 style=\"color: #f43f5e; margin: 0; font-size: 24px;\">📥 New Assignment Submission</h2>\n    <p style=\"color: #94a3b8; margin-top: 5px; font-size: 14px;\">A new submission has been processed automatically.</p>\n  </div>\n  \n  <div style=\"padding: 20px 0;\">\n    <table style=\"width: 100%; border-collapse: collapse; font-size: 14px; color: #e2e8f0;\">\n      <tr>\n        <td style=\"padding: 8px 0; color: #94a3b8; font-weight: bold;\">Student Name:</td>\n        <td style=\"padding: 8px 0;\">{{ $('Webhook').item.json.body.name }}</td>\n      </tr>\n      <tr>\n        <td style=\"padding: 8px 0; color: #94a3b8; font-weight: bold;\">Roll Number:</td>\n        <td style=\"padding: 8px 0;\">{{ $('Webhook').item.json.body.rollNo }}</td>\n      </tr>\n      <tr>\n        <td style=\"padding: 8px 0; color: #94a3b8; font-weight: bold;\">Student Email:</td>\n        <td style=\"padding: 8px 0; color: #38bdf8;\">{{ $('Webhook').item.json.body.email }}</td>\n      </tr>\n    </table>\n\n    <div style=\"margin-top: 25px; text-align: center;\">\n      <a href=\"{{ $('Upload Assignment ZIP').item.json.webViewLink }}\" style=\"background: linear-gradient(135deg, #0284c7, #2563eb); color: #ffffff; padding: 12px 24px; text-decoration: none; border-radius: 8px; font-weight: bold; display: inline-block;\">📁 Open File in Google Drive</a>\n    </div>\n  </div>\n</div>",
+        "options": {}
+      },
+      "id": "5da7f150-49ea-4a46-b12d-6fac9616e516",
+      "name": "Send a message1",
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        1856,
+        0
+      ],
+      "webhookId": "5894fd1c-e009-4ae2-99e2-b64f11cccec2",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "71QnetDkolFRyEtJ",
+          "name": "Gmail account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "2bbe220f-ef54-4646-a491-f4c25c7aa8a9",
+              "name": "data",
+              "value": "={{ $('Webhook').item.binary.data }}",
+              "type": "binary"
+            }
+          ]
+        },
+        "includeOtherFields": true,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        208,
+        0
+      ],
+      "id": "8ac150f5-7a8c-4f69-9bcd-2248468fbfde",
+      "name": "Edit Fields"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "3eb5227f-7232-4e10-9b46-bffa19186dda",
+              "name": "data",
+              "value": "={{ $('Webhook').item.binary.data }}",
+              "type": "binary"
+            }
+          ]
+        },
+        "includeOtherFields": true,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        1104,
+        256
+      ],
+      "id": "32463f8b-fccc-46d1-96d2-ee0ab1c427e5",
+      "name": "Edit Fields1"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "3eb5227f-7232-4e10-9b46-bffa19186dda",
+              "name": "data",
+              "value": "={{ $('Webhook').item.binary.data }}",
+              "type": "binary"
+            }
+          ]
+        },
+        "includeOtherFields": true,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        1120,
+        448
+      ],
+      "id": "e01f8de8-ab12-49e5-bb65-1c9f1a68d368",
+      "name": "Edit Fields2"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Search files and folders": {
+      "main": [
+        [
+          {
+            "node": "If",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields1",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Create Student Folder",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Upload Assignment ZIP": {
+      "main": [
+        [
+          {
+            "node": "Update Google Sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Update Google Sheet": {
+      "main": [
+        [
+          {
+            "node": "Send a message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send a message": {
+      "main": [
+        [
+          {
+            "node": "Send a message1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields": {
+      "main": [
+        [
+          {
+            "node": "Search files and folders",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Create Student Folder": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields1": {
+      "main": [
+        [
+          {
+            "node": "Upload Assignment ZIP",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields2": {
+      "main": [
+        [
+          {
+            "node": "Upload Assignment ZIP",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "availableInMCP": false
+  },
+  "versionId": "c8133620-e6ce-4bae-b317-8d0bef0cf098",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "f2b7c8ddeaef4ff91d32056599548698cbf5b45f7bf26d75a4171d9df10ee73e"
+  },
+  "nodeGroups": [],
+  "id": "u60p8eyMWJjhgd98",
+  "tags": []
+}
