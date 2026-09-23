@@ -46,20 +46,8 @@
     .form-container p {
       color: #94a3b8;
       font-size: 14px;
-      margin-bottom: 20px;
+      margin-bottom: 25px;
       text-align: center;
-    }
-
-    .timer-box {
-      background: rgba(56, 189, 248, 0.08);
-      border: 1px solid rgba(56, 189, 248, 0.2);
-      padding: 10px;
-      border-radius: 8px;
-      text-align: center;
-      margin-bottom: 22px;
-      font-size: 13px;
-      color: #38bdf8;
-      font-weight: 500;
     }
 
     .form-group {
@@ -78,6 +66,7 @@
 
     .form-group input[type="text"],
     .form-group input[type="email"],
+    .form-group select,
     .form-group input[type="file"] {
       width: 100%;
       padding: 13px 16px;
@@ -89,12 +78,28 @@
       transition: all 0.25s ease;
     }
 
+    .form-group select {
+      cursor: pointer;
+      appearance: none;
+      -webkit-appearance: none;
+      background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%3c38bdf8' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+      background-repeat: no-repeat;
+      background-position: right 16px center;
+      background-size: 16px;
+    }
+
+    .form-group select option {
+      background: #0f172a;
+      color: #f8fafc;
+    }
+
     .form-group input[type="text"]::placeholder,
     .form-group input[type="email"]::placeholder {
       color: #64748b;
     }
 
-    .form-group input:focus {
+    .form-group input:focus,
+    .form-group select:focus {
       outline: none;
       border-color: #38bdf8;
       box-shadow: 0 0 0 3px rgba(56, 189, 248, 0.15);
@@ -169,8 +174,6 @@
     <h2>Submit Assignment</h2>
     <p>Upload your ZIP project file below</p>
 
-    <div class="timer-box" id="timerDisplay">Calculations loading...</div>
-
     <form id="assignmentForm">
       <div class="form-group">
         <label for="name">Student Name</label>
@@ -178,13 +181,89 @@
       </div>
 
       <div class="form-group">
-        <label for="rollNo">Roll Number</label>
-        <input type="text" id="rollNo" name="rollNo" placeholder="73" required>
+        <label for="rollNo">Select Roll Number</label>
+        <select id="rollNo" name="rollNo" required>
+          <option value="" disabled selected>-- Select Your Roll Number --</option>
+          <option value="SU72-BSAIM-F24-001">SU72-BSAIM-F24-001</option>
+          <option value="SU72-BSAIM-F24-003">SU72-BSAIM-F24-003</option>
+          <option value="SU72-BSAIM-F24-004">SU72-BSAIM-F24-004</option>
+          <option value="SU72-BSAIM-F24-005">SU72-BSAIM-F24-005</option>
+          <option value="SU72-BSAIM-F24-010">SU72-BSAIM-F24-010</option>
+          <option value="SU72-BSAIM-F24-011">SU72-BSAIM-F24-011</option>
+          <option value="SU72-BSAIM-F24-014">SU72-BSAIM-F24-014</option>
+          <option value="SU72-BSAIM-F24-015">SU72-BSAIM-F24-015</option>
+          <option value="SU72-BSAIM-F24-016">SU72-BSAIM-F24-016</option>
+          <option value="SU72-BSAIM-F24-018">SU72-BSAIM-F24-018</option>
+          <option value="SU72-BSAIM-F24-019">SU72-BSAIM-F24-019</option>
+          <option value="SU72-BSAIM-F24-021">SU72-BSAIM-F24-021</option>
+          <option value="SU72-BSAIM-F24-022">SU72-BSAIM-F24-022</option>
+          <option value="SU72-BSAIM-F24-028">SU72-BSAIM-F24-028</option>
+          <option value="SU72-BSAIM-F24-029">SU72-BSAIM-F24-029</option>
+          <option value="SU72-BSAIM-F24-030">SU72-BSAIM-F24-030</option>
+          <option value="SU72-BSAIM-F24-031">SU72-BSAIM-F24-031</option>
+          <option value="SU72-BSAIM-F24-033">SU72-BSAIM-F24-033</option>
+          <option value="SU72-BSAIM-F24-034">SU72-BSAIM-F24-034</option>
+          <option value="SU72-BSAIM-F24-035">SU72-BSAIM-F24-035</option>
+          <option value="SU72-BSAIM-F24-037">SU72-BSAIM-F24-037</option>
+          <option value="SU72-BSAIM-F24-038">SU72-BSAIM-F24-038</option>
+          <option value="SU72-BSAIM-F24-039">SU72-BSAIM-F24-039</option>
+          <option value="SU72-BSAIM-F24-040">SU72-BSAIM-F24-040</option>
+          <option value="SU72-BSAIM-F24-041">SU72-BSAIM-F24-041</option>
+          <option value="SU72-BSAIM-F24-042">SU72-BSAIM-F24-042</option>
+          <option value="SU72-BSAIM-F24-043">SU72-BSAIM-F24-043</option>
+          <option value="SU72-BSAIM-F24-044">SU72-BSAIM-F24-044</option>
+          <option value="SU72-BSAIM-F24-045">SU72-BSAIM-F24-045</option>
+          <option value="SU72-BSAIM-F24-046">SU72-BSAIM-F24-046</option>
+          <option value="SU72-BSAIM-F24-048">SU72-BSAIM-F24-048</option>
+          <option value="SU72-BSAIM-F24-049">SU72-BSAIM-F24-049</option>
+          <option value="SU72-BSAIM-F24-050">SU72-BSAIM-F24-050</option>
+          <option value="SU72-BSAIM-F24-051">SU72-BSAIM-F24-051</option>
+          <option value="SU72-BSAIM-F24-053">SU72-BSAIM-F24-053</option>
+          <option value="SU72-BSAIM-F24-054">SU72-BSAIM-F24-054</option>
+          <option value="SU72-BSAIM-F24-055">SU72-BSAIM-F24-055</option>
+          <option value="SU72-BSAIM-F24-056">SU72-BSAIM-F24-056</option>
+          <option value="SU72-BSAIM-F24-057">SU72-BSAIM-F24-057</option>
+          <option value="SU72-BSAIM-F24-058">SU72-BSAIM-F24-058</option>
+          <option value="SU72-BSAIM-F24-059">SU72-BSAIM-F24-059</option>
+          <option value="SU72-BSAIM-F24-060">SU72-BSAIM-F24-060</option>
+          <option value="SU72-BSAIM-F24-062">SU72-BSAIM-F24-062</option>
+          <option value="SU72-BSAIM-F24-064">SU72-BSAIM-F24-064</option>
+          <option value="SU72-BSAIM-F24-066">SU72-BSAIM-F24-066</option>
+          <option value="SU72-BSAIM-F24-068">SU72-BSAIM-F24-068</option>
+          <option value="SU72-BSAIM-F24-069">SU72-BSAIM-F24-069</option>
+          <option value="SU72-BSAIM-F24-070">SU72-BSAIM-F24-070</option>
+          <option value="SU72-BSAIM-F24-072">SU72-BSAIM-F24-072</option>
+          <option value="SU72-BSAIM-F24-073">SU72-BSAIM-F24-073</option>
+          <option value="SU72-BSAIM-F24-078">SU72-BSAIM-F24-078</option>
+          <option value="SU72-BSAIM-S25-001 (Spring)">SU72-BSAIM-S25-001 (Spring)</option>
+          <option value="SU72-BSAIM-S25-003 (Spring)">SU72-BSAIM-S25-003 (Spring)</option>
+          <option value="SU72-BSAIM-S25-004 (Spring)">SU72-BSAIM-S25-004 (Spring)</option>
+          <option value="SU72-BSAIM-S25-005 (Spring)">SU72-BSAIM-S25-005 (Spring)</option>
+          <option value="SU72-BSAIM-S25-0010 (Spring)">SU72-BSAIM-S25-0010 (Spring)</option>
+          <option value="SU72-BSAIM-S25-0011 (Spring)">SU72-BSAIM-S25-0011 (Spring)</option>
+        </select>
       </div>
 
       <div class="form-group">
         <label for="email">Email Address</label>
         <input type="email" id="email" name="email" placeholder="student@example.com" autocomplete="email" required>
+      </div>
+
+      <div class="form-group">
+        <label for="assignmentNo">Select Assignment</label>
+        <select id="assignmentNo" name="assignmentNo" required>
+          <option value="" disabled selected>-- Select Assignment --</option>
+          <option value="1">Assignment 1</option>
+          <option value="2">Assignment 2</option>
+          <option value="3">Assignment 3</option>
+          <option value="4">Assignment 4</option>
+          <option value="5">Assignment 5</option>
+          <option value="6">Assignment 6</option>
+          <option value="7">Assignment 7</option>
+          <option value="8">Assignment 8</option>
+          <option value="9">Assignment 9</option>
+          <option value="10">Assignment 10</option>
+        </select>
       </div>
 
       <div class="form-group">
@@ -199,54 +278,12 @@
   </div>
 
   <script>
-    const WEBHOOK_URL = "https://n8n.srv1592446.hstgr.cloud/webhook/submit-assignment";
+    const WEBHOOK_URL = "https://n8n.srv1592446.hstgr.cloud/webhook/73df8436-4a63-4590-b553-72b89f142d4e";
 
-    function getDeadline() {
-      const now = new Date();
-      const result = new Date(now);
-      const day = now.getDay();
-      let diff = (1 + 7 - day) % 7;
-
-      if (diff === 0 && (now.getHours() > 9 || (now.getHours() === 9 && now.getMinutes() >= 45))) {
-        diff = 7;
-      }
-
-      result.setDate(now.getDate() + diff);
-      result.setHours(9, 45, 0, 0);
-      return result;
-    }
-
-    const deadline = getDeadline();
-
-    const timerEl = document.getElementById("timerDisplay");
     const btn = document.getElementById("btn");
     const status = document.getElementById("status-msg");
     const form = document.getElementById("assignmentForm");
     const fileInput = document.getElementById("zipFile");
-
-    function updateTimer() {
-      const now = new Date().getTime();
-      const distance = deadline.getTime() - now;
-
-      if (distance <= 0) {
-        timerEl.innerText = "❌ Deadline Passed (Closed)";
-        timerEl.style.color = "#f87171";
-        timerEl.style.borderColor = "rgba(248, 113, 113, 0.3)";
-        btn.disabled = true;
-        btn.innerText = "Submission Closed";
-        return;
-      }
-
-      const days = Math.floor(distance / (1000 * 60 * 60 * 24));
-      const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-      const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
-      const seconds = Math.floor((distance % (1000 * 60)) / 1000);
-
-      timerEl.innerText = `⏳ Time left: ${days}d ${hours}h ${minutes}m ${seconds}s`;
-    }
-
-    updateTimer();
-    setInterval(updateTimer, 1000);
 
     fileInput.addEventListener("change", function () {
       const file = fileInput.files[0];
@@ -272,15 +309,6 @@
       status.innerText = "";
       status.className = "";
 
-      const now = new Date();
-      if (now >= deadline) {
-        status.innerText = "❌ Submission closed! Deadline has passed.";
-        status.className = "error";
-        btn.disabled = true;
-        btn.innerText = "Submission Closed";
-        return;
-      }
-
       const file = fileInput.files[0];
       if (!file) {
         status.innerText = "❌ Please select your assignment file.";
@@ -297,8 +325,9 @@
 
       const formData = new FormData();
       formData.append("name", document.getElementById("name").value.trim());
-      formData.append("rollNo", document.getElementById("rollNo").value.trim());
+      formData.append("rollNo", document.getElementById("rollNo").value);
       formData.append("email", document.getElementById("email").value.trim());
+      formData.append("assignmentNo", document.getElementById("assignmentNo").value);
       formData.append("data", file);
 
       try {
@@ -311,18 +340,15 @@
           throw new Error(`Server error: ${response.status}`);
         }
 
-        // Successfully received a 2xx response from n8n
         status.innerText = "✨ Assignment submitted successfully!";
         status.className = "success";
         form.reset();
         btn.innerText = "Submitted ✓";
 
         setTimeout(function () {
-          if (new Date() < deadline) {
-            btn.innerText = "Submit Assignment";
-            btn.disabled = false;
-            btn.style.pointerEvents = "auto";
-          }
+          btn.innerText = "Submit Assignment";
+          btn.disabled = false;
+          btn.style.pointerEvents = "auto";
         }, 2000);
 
       } catch (err) {
@@ -330,15 +356,9 @@
         status.innerText = "❌ Assignment submission failed. Please try again.";
         status.className = "error";
 
-        if (new Date() < deadline) {
-          btn.innerText = "Try Again";
-          btn.disabled = false;
-          btn.style.pointerEvents = "auto";
-        } else {
-          btn.innerText = "Submission Closed";
-          btn.disabled = true;
-          btn.style.pointerEvents = "none";
-        }
+        btn.innerText = "Try Again";
+        btn.disabled = false;
+        btn.style.pointerEvents = "auto";
       }
     });
   </script>
