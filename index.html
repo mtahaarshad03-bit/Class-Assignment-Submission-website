@@ -3,187 +3,464 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Student Assignment Submission Portal</title>
+  <meta name="theme-color" content="#070b18">
+  <title>BSAI Web Development | Assignment Portal</title>
+
   <style>
     * {
       box-sizing: border-box;
       margin: 0;
       padding: 0;
-      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont,
+        "Segoe UI", Roboto, Arial, sans-serif;
+    }
+
+    :root {
+      --bg: #060914;
+      --panel: rgba(13, 19, 38, .72);
+      --panel-2: rgba(18, 26, 49, .72);
+      --line: rgba(148, 163, 184, .17);
+      --text: #f8fafc;
+      --muted: #94a3b8;
+      --cyan: #22d3ee;
+      --blue: #6366f1;
+      --violet: #a855f7;
+      --green: #34d399;
+      --red: #fb7185;
     }
 
     body {
-      background: radial-gradient(circle at top left, #1a1c29, #0e1017);
-      display: flex;
-      justify-content: center;
-      align-items: center;
       min-height: 100vh;
-      padding: 20px;
-      color: #e2e8f0;
+      color: var(--text);
+      background:
+        radial-gradient(circle at 12% 8%, rgba(34,211,238,.15), transparent 27%),
+        radial-gradient(circle at 88% 18%, rgba(168,85,247,.15), transparent 28%),
+        radial-gradient(circle at 50% 100%, rgba(99,102,241,.12), transparent 34%),
+        var(--bg);
+      overflow-x: hidden;
     }
 
-    .form-container {
-      background: rgba(22, 27, 38, 0.75);
-      backdrop-filter: blur(16px);
-      -webkit-backdrop-filter: blur(16px);
-      border: 1px solid rgba(255, 255, 255, 0.08);
-      padding: 35px 40px;
-      border-radius: 16px;
-      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5), 0 0 30px rgba(56, 189, 248, 0.05);
-      width: 100%;
-      max-width: 480px;
+    body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      opacity: .22;
+      background-image:
+        linear-gradient(rgba(255,255,255,.025) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,255,255,.025) 1px, transparent 1px);
+      background-size: 42px 42px;
+      mask-image: linear-gradient(to bottom, black, transparent 88%);
     }
 
-    .form-container h2 {
-      color: #ffffff;
-      font-size: 24px;
-      font-weight: 700;
-      margin-bottom: 8px;
+    .orb {
+      position: fixed;
+      width: 260px;
+      height: 260px;
+      border-radius: 50%;
+      filter: blur(70px);
+      opacity: .14;
+      pointer-events: none;
+      animation: float 8s ease-in-out infinite;
+    }
+
+    .orb.one { background: var(--cyan); left: -90px; top: 35%; }
+    .orb.two { background: var(--violet); right: -100px; top: 8%; animation-delay: -3s; }
+
+    @keyframes float {
+      0%,100% { transform: translateY(0) translateX(0); }
+      50% { transform: translateY(-25px) translateX(12px); }
+    }
+
+    .page {
+      width: min(1050px, calc(100% - 30px));
+      margin: 0 auto;
+      padding: 42px 0 50px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .hero {
       text-align: center;
-      letter-spacing: -0.5px;
+      margin-bottom: 28px;
     }
 
-    .form-container p {
-      color: #94a3b8;
-      font-size: 14px;
-      margin-bottom: 25px;
-      text-align: center;
-    }
-
-    .form-group {
-      margin-bottom: 20px;
-    }
-
-    .form-group label {
-      display: block;
-      margin-bottom: 8px;
-      color: #cbd5e1;
-      font-weight: 500;
-      font-size: 13px;
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 14px;
+      border: 1px solid rgba(34,211,238,.25);
+      background: rgba(34,211,238,.07);
+      color: #a5f3fc;
+      border-radius: 999px;
+      font-size: 12px;
+      font-weight: 800;
+      letter-spacing: .14em;
       text-transform: uppercase;
-      letter-spacing: 0.5px;
+      box-shadow: 0 0 28px rgba(34,211,238,.07);
     }
 
-    .form-group input[type="text"],
-    .form-group input[type="email"],
-    .form-group select,
-    .form-group input[type="file"] {
-      width: 100%;
-      padding: 13px 16px;
-      background: rgba(15, 23, 42, 0.6);
-      border: 1px solid #334155;
-      border-radius: 8px;
+    .badge-dot {
+      width: 7px;
+      height: 7px;
+      background: var(--cyan);
+      border-radius: 50%;
+      box-shadow: 0 0 12px var(--cyan);
+    }
+
+    h1 {
+      margin-top: 18px;
+      font-size: clamp(32px, 6vw, 58px);
+      line-height: 1.02;
+      letter-spacing: -.045em;
+      background: linear-gradient(90deg, #fff, #bff9ff 42%, #c4b5fd 78%, #fff);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+    }
+
+    .hero-sub {
+      margin: 12px auto 0;
+      max-width: 680px;
+      color: var(--muted);
+      font-size: 15px;
+      line-height: 1.7;
+    }
+
+    .subject-line {
+      margin-top: 10px;
       font-size: 14px;
-      color: #f8fafc;
-      transition: all 0.25s ease;
+      color: #cbd5e1;
+      font-weight: 700;
     }
 
-    .form-group select {
+    .subject-line span {
+      color: #67e8f9;
+    }
+
+    .layout {
+      display: grid;
+      grid-template-columns: 1fr 340px;
+      gap: 22px;
+      align-items: start;
+    }
+
+    .card {
+      background: linear-gradient(145deg, rgba(17,24,48,.82), rgba(8,13,28,.78));
+      border: 1px solid var(--line);
+      border-radius: 24px;
+      box-shadow: 0 28px 80px rgba(0,0,0,.36), inset 0 1px 0 rgba(255,255,255,.035);
+      backdrop-filter: blur(22px);
+      -webkit-backdrop-filter: blur(22px);
+    }
+
+    .form-card { padding: 28px; }
+    .info-card { padding: 24px; position: sticky; top: 20px; }
+
+    .card-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 14px;
+      margin-bottom: 24px;
+    }
+
+    .card-head h2 {
+      font-size: 19px;
+      letter-spacing: -.02em;
+    }
+
+    .secure {
+      color: #86efac;
+      background: rgba(52,211,153,.08);
+      border: 1px solid rgba(52,211,153,.18);
+      padding: 7px 10px;
+      border-radius: 10px;
+      font-size: 11px;
+      font-weight: 800;
+      white-space: nowrap;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 17px;
+    }
+
+    .field.full { grid-column: 1 / -1; }
+
+    label {
+      display: block;
+      margin: 0 0 8px 2px;
+      color: #cbd5e1;
+      font-size: 12px;
+      font-weight: 800;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+    }
+
+    .input-wrap { position: relative; }
+
+    input, select {
+      width: 100%;
+      height: 50px;
+      border: 1px solid rgba(148,163,184,.18);
+      outline: none;
+      border-radius: 13px;
+      padding: 0 15px;
+      color: #f8fafc;
+      background: rgba(2,6,23,.55);
+      transition: .22s ease;
+      font-size: 14px;
+    }
+
+    select {
       cursor: pointer;
       appearance: none;
-      -webkit-appearance: none;
-      background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%3c38bdf8' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+      padding-right: 40px;
+      background-image:
+        linear-gradient(45deg, transparent 50%, #67e8f9 50%),
+        linear-gradient(135deg, #67e8f9 50%, transparent 50%);
+      background-position:
+        calc(100% - 18px) 21px,
+        calc(100% - 13px) 21px;
+      background-size: 5px 5px, 5px 5px;
       background-repeat: no-repeat;
-      background-position: right 16px center;
-      background-size: 16px;
     }
 
-    .form-group select option {
-      background: #0f172a;
-      color: #f8fafc;
+    select option { background: #0b1224; color: #fff; }
+
+    input::placeholder { color: #64748b; }
+
+    input:focus, select:focus {
+      border-color: rgba(34,211,238,.65);
+      box-shadow: 0 0 0 4px rgba(34,211,238,.08), 0 0 28px rgba(34,211,238,.06);
+      background: rgba(5,12,30,.78);
     }
 
-    .form-group input[type="text"]::placeholder,
-    .form-group input[type="email"]::placeholder {
-      color: #64748b;
+    .upload {
+      position: relative;
+      border: 1px dashed rgba(103,232,249,.3);
+      border-radius: 16px;
+      background: rgba(34,211,238,.035);
+      padding: 16px;
+      transition: .2s ease;
     }
 
-    .form-group input:focus,
-    .form-group select:focus {
-      outline: none;
-      border-color: #38bdf8;
-      box-shadow: 0 0 0 3px rgba(56, 189, 248, 0.15);
-      background: rgba(15, 23, 42, 0.9);
+    .upload:hover, .upload.dragover {
+      border-color: rgba(34,211,238,.75);
+      background: rgba(34,211,238,.065);
+      transform: translateY(-1px);
     }
 
-    .form-group input[type="file"] {
-      padding: 10px;
+    .upload input[type=file] {
+      height: auto;
+      border: 0;
+      background: transparent;
+      padding: 0;
       cursor: pointer;
+      box-shadow: none;
     }
 
-    .form-group input[type="file"]::file-selector-button {
-      background: #1e293b;
-      color: #38bdf8;
-      border: 1px solid #334155;
-      padding: 6px 12px;
-      border-radius: 6px;
-      margin-right: 12px;
-      cursor: pointer;
-      font-weight: 600;
-      transition: all 0.2s;
+    .upload input[type=file]:focus {
+      box-shadow: none;
+      border: 0;
     }
 
-    .form-group input[type="file"]::file-selector-button:hover {
-      background: #334155;
-      color: #ffffff;
+    .file-note {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-top: 9px;
+      color: #7dd3fc;
+      font-size: 12px;
+    }
+
+    .file-name {
+      margin-top: 8px;
+      color: #cbd5e1;
+      font-size: 12px;
+      word-break: break-all;
+      min-height: 16px;
     }
 
     .submit-btn {
       width: 100%;
-      background: linear-gradient(135deg, #0284c7, #2563eb);
-      color: #ffffff;
-      border: none;
-      padding: 14px;
-      border-radius: 8px;
-      font-size: 15px;
-      font-weight: 600;
+      height: 54px;
+      margin-top: 21px;
+      border: 0;
+      border-radius: 14px;
+      color: white;
+      font-size: 14px;
+      font-weight: 900;
+      letter-spacing: .02em;
       cursor: pointer;
-      transition: all 0.3s ease;
-      box-shadow: 0 4px 15px rgba(37, 99, 235, 0.3);
-      margin-top: 10px;
+      background: linear-gradient(100deg, #0891b2, #4f46e5, #9333ea);
+      background-size: 180% 100%;
+      box-shadow: 0 13px 35px rgba(79,70,229,.24);
+      transition: .25s ease;
     }
 
     .submit-btn:hover:not(:disabled) {
-      transform: translateY(-1px);
-      box-shadow: 0 6px 20px rgba(37, 99, 235, 0.45);
-      background: linear-gradient(135deg, #0369a1, #1d4ed8);
+      transform: translateY(-2px);
+      background-position: 100% 0;
+      box-shadow: 0 17px 40px rgba(79,70,229,.34);
     }
 
     .submit-btn:disabled {
-      opacity: 0.6;
+      opacity: .65;
       cursor: not-allowed;
-      transform: none;
     }
 
     #status-msg {
-      margin-top: 18px;
+      min-height: 22px;
+      margin-top: 15px;
       text-align: center;
-      font-weight: 500;
-      font-size: 14px;
-      min-height: 20px;
+      font-size: 13px;
+      font-weight: 700;
     }
 
-    .success { color: #4ade80; }
-    .error { color: #f87171; }
-    .loading { color: #38bdf8; }
+    .success { color: #6ee7b7; }
+    .error { color: #fb7185; }
+    .loading { color: #67e8f9; }
+
+    .steps {
+      display: grid;
+      gap: 14px;
+      margin-top: 6px;
+    }
+
+    .step {
+      display: flex;
+      gap: 13px;
+      align-items: flex-start;
+    }
+
+    .step-no {
+      width: 31px;
+      height: 31px;
+      flex: 0 0 31px;
+      display: grid;
+      place-items: center;
+      border-radius: 10px;
+      color: #a5f3fc;
+      background: rgba(34,211,238,.08);
+      border: 1px solid rgba(34,211,238,.18);
+      font-size: 12px;
+      font-weight: 900;
+    }
+
+    .step strong {
+      display: block;
+      font-size: 13px;
+      margin-bottom: 3px;
+    }
+
+    .step p {
+      color: #7f8da6;
+      font-size: 12px;
+      line-height: 1.5;
+    }
+
+    .divider {
+      height: 1px;
+      background: var(--line);
+      margin: 22px 0;
+    }
+
+    .meta {
+      display: grid;
+      gap: 9px;
+    }
+
+    .meta-row {
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      font-size: 12px;
+      color: #94a3b8;
+    }
+
+    .meta-row b { color: #e2e8f0; text-align: right; }
+
+    .footer {
+      margin-top: 22px;
+      text-align: center;
+      color: #64748b;
+      font-size: 11px;
+    }
+
+    .pulse {
+      display: inline-block;
+      width: 6px;
+      height: 6px;
+      margin-right: 6px;
+      border-radius: 50%;
+      background: var(--green);
+      box-shadow: 0 0 10px rgba(52,211,153,.8);
+    }
+
+    @media (max-width: 820px) {
+      .layout { grid-template-columns: 1fr; }
+      .info-card { position: static; }
+    }
+
+    @media (max-width: 580px) {
+      .page { width: min(100% - 18px, 1050px); padding-top: 25px; }
+      .form-card, .info-card { padding: 20px; border-radius: 20px; }
+      .grid { grid-template-columns: 1fr; }
+      .field.full { grid-column: auto; }
+      h1 { font-size: 36px; }
+      .hero-sub { font-size: 13px; }
+    }
   </style>
 </head>
 
 <body>
-  <div class="form-container">
-    <h2>Submit Assignment</h2>
-    <p>Upload your ZIP project file below</p>
+  <div class="orb one"></div>
+  <div class="orb two"></div>
 
-    <form id="assignmentForm">
-      <div class="form-group">
-        <label for="name">Student Name</label>
-        <input type="text" id="name" name="name" placeholder="Enter your full name" autocomplete="name" required>
-      </div>
+  <main class="page">
+    <header class="hero">
+      <div class="badge"><span class="badge-dot"></span> BSAI · 5th Semester</div>
+      <h1>Assignment Submission Portal</h1>
+      <p class="hero-sub">
+        A dedicated submission portal for Web Development assignments.
+        Submit your project details and upload your compressed assignment file securely.
+      </p>
+      <div class="subject-line">Subject: <span>Web Development</span></div>
+    </header>
 
-      <div class="form-group">
-        <label for="rollNo">Select Roll Number</label>
-        <select id="rollNo" name="rollNo" required>
-          <option value="" disabled selected>-- Select Your Roll Number --</option>
+    <section class="layout">
+      <div class="card form-card">
+        <div class="card-head">
+          <div>
+            <h2>Submit Your Assignment</h2>
+          </div>
+          <div class="secure">● SECURE SUBMISSION</div>
+        </div>
+
+        <form id="assignmentForm">
+          <div class="grid">
+            <div class="field">
+              <label for="name">Student Name</label>
+              <input type="text" id="name" name="name"
+                     placeholder="Enter your full name"
+                     autocomplete="name" required>
+            </div>
+
+            <div class="field">
+              <label for="email">Email Address</label>
+              <input type="email" id="email" name="email"
+                     placeholder="student@example.com"
+                     autocomplete="email" required>
+            </div>
+
+            <div class="field full">
+              <label for="rollNo">Roll Number</label>
+              <select id="rollNo" name="rollNo" required>
+<option value="" disabled selected>-- Select Your Roll Number --</option>
           <option value="SU72-BSAIM-F24-001">SU72-BSAIM-F24-001</option>
           <option value="SU72-BSAIM-F24-003">SU72-BSAIM-F24-003</option>
           <option value="SU72-BSAIM-F24-004">SU72-BSAIM-F24-004</option>
@@ -239,43 +516,103 @@
           <option value="SU72-BSAIM-S25-003 (Spring)">SU72-BSAIM-S25-003 (Spring)</option>
           <option value="SU72-BSAIM-S25-004 (Spring)">SU72-BSAIM-S25-004 (Spring)</option>
           <option value="SU72-BSAIM-S25-005 (Spring)">SU72-BSAIM-S25-005 (Spring)</option>
-          <option value="SU72-BSAIM-S25-0010 (Spring)">SU72-BSAIM-S25-0010 (Spring)</option>
-          <option value="SU72-BSAIM-S25-0011 (Spring)">SU72-BSAIM-S25-0011 (Spring)</option>
-        </select>
+          <option value="SU72-BSAIM-S25-010 (Spring)">SU72-BSAIM-S25-010 (Spring)</option>
+          <option value="SU72-BSAIM-S25-011 (Spring)">SU72-BSAIM-S25-011 (Spring)</option>
+        
+              </select>
+            </div>
+
+            <div class="field full">
+              <label for="assignmentNo">Assignment</label>
+              <select id="assignmentNo" name="assignmentNo" required>
+                <option value="" disabled selected>-- Select Assignment --</option>
+                <option value="1">Assignment 1</option>
+                <option value="2">Assignment 2</option>
+                <option value="3">Assignment 3</option>
+                <option value="4">Assignment 4</option>
+                <option value="5">Assignment 5</option>
+                <option value="6">Assignment 6</option>
+                <option value="7">Assignment 7</option>
+                <option value="8">Assignment 8</option>
+                <option value="9">Assignment 9</option>
+                <option value="10">Assignment 10</option>
+              </select>
+            </div>
+
+            <div class="field full">
+              <label for="zipFile">Assignment File</label>
+              <div class="upload" id="uploadBox">
+                <input type="file" id="zipFile" name="data"
+                       accept=".zip,.rar,.7z,application/zip,application/x-zip-compressed"
+                       required>
+                <div class="file-note">📦 ZIP, RAR or 7Z files are accepted</div>
+                <div class="file-name" id="fileName">No file selected</div>
+              </div>
+            </div>
+          </div>
+
+          <button type="submit" class="submit-btn" id="btn">
+            Submit Assignment →
+          </button>
+
+          <div id="status-msg" aria-live="polite"></div>
+        </form>
       </div>
 
-      <div class="form-group">
-        <label for="email">Email Address</label>
-        <input type="email" id="email" name="email" placeholder="student@example.com" autocomplete="email" required>
-      </div>
+      <aside class="card info-card">
+        <div class="card-head">
+          <h2>Submission Guide</h2>
+        </div>
 
-      <div class="form-group">
-        <label for="assignmentNo">Select Assignment</label>
-        <select id="assignmentNo" name="assignmentNo" required>
-          <option value="" disabled selected>-- Select Assignment --</option>
-          <option value="1">Assignment 1</option>
-          <option value="2">Assignment 2</option>
-          <option value="3">Assignment 3</option>
-          <option value="4">Assignment 4</option>
-          <option value="5">Assignment 5</option>
-          <option value="6">Assignment 6</option>
-          <option value="7">Assignment 7</option>
-          <option value="8">Assignment 8</option>
-          <option value="9">Assignment 9</option>
-          <option value="10">Assignment 10</option>
-        </select>
-      </div>
+        <div class="steps">
+          <div class="step">
+            <div class="step-no">01</div>
+            <div>
+              <strong>Enter your details</strong>
+              <p>Provide your name, email and correct university roll number.</p>
+            </div>
+          </div>
 
-      <div class="form-group">
-        <label for="zipFile">Assignment File</label>
-        <input type="file" id="zipFile" name="data" accept=".zip,.rar,.7z,application/zip,application/x-zip-compressed" required>
-      </div>
+          <div class="step">
+            <div class="step-no">02</div>
+            <div>
+              <strong>Select assignment</strong>
+              <p>Choose the assignment number you are submitting.</p>
+            </div>
+          </div>
 
-      <button type="submit" class="submit-btn" id="btn">Submit Assignment</button>
-    </form>
+          <div class="step">
+            <div class="step-no">03</div>
+            <div>
+              <strong>Upload project</strong>
+              <p>Compress your project and upload it as ZIP, RAR or 7Z.</p>
+            </div>
+          </div>
 
-    <div id="status-msg" aria-live="polite"></div>
-  </div>
+          <div class="step">
+            <div class="step-no">04</div>
+            <div>
+              <strong>Submit</strong>
+              <p>Click submit and wait for the confirmation message.</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="divider"></div>
+
+        <div class="meta">
+          <div class="meta-row"><span>Program</span><b>BSAI</b></div>
+          <div class="meta-row"><span>Semester</span><b>5th Semester</b></div>
+          <div class="meta-row"><span>Subject</span><b>Web Development</b></div>
+          <div class="meta-row"><span>Portal</span><b>Assignment Submission</b></div>
+        </div>
+
+        <div class="footer">
+          <span class="pulse"></span> Submission system is ready
+        </div>
+      </aside>
+    </section>
+  </main>
 
   <script>
     const WEBHOOK_URL = "https://n8n.srv1592446.hstgr.cloud/webhook/73df8436-4a63-4590-b553-72b89f142d4e";
@@ -284,42 +621,99 @@
     const status = document.getElementById("status-msg");
     const form = document.getElementById("assignmentForm");
     const fileInput = document.getElementById("zipFile");
+    const fileName = document.getElementById("fileName");
+    const uploadBox = document.getElementById("uploadBox");
+
+    function validateFile(file) {
+      if (!file) return false;
+
+      const fileNameLower = file.name.toLowerCase();
+      const allowedExtensions = [".zip", ".rar", ".7z"];
+      return allowedExtensions.some(ext => fileNameLower.endsWith(ext));
+    }
+
+    function showError(message) {
+      status.innerText = message;
+      status.className = "error";
+    }
 
     fileInput.addEventListener("change", function () {
       const file = fileInput.files[0];
-      if (!file) return;
+      if (!file) {
+        fileName.innerText = "No file selected";
+        return;
+      }
 
-      const fileName = file.name.toLowerCase();
-      const allowedExtensions = [".zip", ".rar", ".7z"];
-      const valid = allowedExtensions.some(ext => fileName.endsWith(ext));
-
-      if (!valid) {
-        status.innerText = "❌ Please upload a ZIP, RAR, or 7Z file.";
-        status.className = "error";
+      if (!validateFile(file)) {
+        showError("❌ Please upload a ZIP, RAR, or 7Z file.");
         fileInput.value = "";
+        fileName.innerText = "No file selected";
         return;
       }
 
       status.innerText = "";
       status.className = "";
+      fileName.innerText = "Selected: " + file.name;
+    });
+
+    ["dragenter", "dragover"].forEach(eventName => {
+      uploadBox.addEventListener(eventName, e => {
+        e.preventDefault();
+        uploadBox.classList.add("dragover");
+      });
+    });
+
+    ["dragleave", "drop"].forEach(eventName => {
+      uploadBox.addEventListener(eventName, e => {
+        e.preventDefault();
+        uploadBox.classList.remove("dragover");
+      });
+    });
+
+    uploadBox.addEventListener("drop", e => {
+      const file = e.dataTransfer.files[0];
+      if (!file) return;
+
+      try {
+        const dataTransfer = new DataTransfer();
+        dataTransfer.items.add(file);
+        fileInput.files = dataTransfer.files;
+      } catch (err) {
+        // Browser does not allow programmatic file assignment.
+      }
+
+      if (!validateFile(file)) {
+        showError("❌ Please upload a ZIP, RAR, or 7Z file.");
+        fileInput.value = "";
+        fileName.innerText = "No file selected";
+        return;
+      }
+
+      status.innerText = "";
+      status.className = "";
+      fileName.innerText = "Selected: " + file.name;
     });
 
     form.addEventListener("submit", async function (e) {
       e.preventDefault();
+
       status.innerText = "";
       status.className = "";
 
       const file = fileInput.files[0];
+
       if (!file) {
-        status.innerText = "❌ Please select your assignment file.";
-        status.className = "error";
+        showError("❌ Please select your assignment file.");
+        return;
+      }
+
+      if (!validateFile(file)) {
+        showError("❌ Please upload a ZIP, RAR, or 7Z file.");
         return;
       }
 
       btn.innerText = "Uploading... Please wait";
       btn.disabled = true;
-      btn.style.pointerEvents = "none";
-
       status.innerText = "⏳ Uploading assignment...";
       status.className = "loading";
 
@@ -343,22 +737,19 @@
         status.innerText = "✨ Assignment submitted successfully!";
         status.className = "success";
         form.reset();
+        fileName.innerText = "No file selected";
         btn.innerText = "Submitted ✓";
 
-        setTimeout(function () {
-          btn.innerText = "Submit Assignment";
+        setTimeout(() => {
+          btn.innerText = "Submit Assignment →";
           btn.disabled = false;
-          btn.style.pointerEvents = "auto";
         }, 2000);
 
       } catch (err) {
         console.error("Assignment submission error:", err);
-        status.innerText = "❌ Assignment submission failed. Please try again.";
-        status.className = "error";
-
+        showError("❌ Assignment submission failed. Please try again.");
         btn.innerText = "Try Again";
         btn.disabled = false;
-        btn.style.pointerEvents = "auto";
       }
     });
   </script>

@@ -1,15 +1,16 @@
 {
-  "name": "My workflow (Fixed Final)",
+  "name": "Web Development",
   "nodes": [
     {
       "parameters": {
         "httpMethod": "POST",
-        "path": "submit-assignment",
+        "path": "73df8436-4a63-4590-b553-72b89f142d4e",
+        "responseMode": "lastNode",
         "options": {
           "allowedOrigins": "*"
         }
       },
-      "id": "3d8e9ce1-d04f-4a90-aeec-501846a9fd25",
+      "id": "299e189c-6411-4845-aa34-39720449ff2f",
       "name": "Webhook",
       "type": "n8n-nodes-base.webhook",
       "typeVersion": 1.1,
@@ -17,12 +18,13 @@
         0,
         0
       ],
-      "webhookId": "0dc05ba0-04bf-4ee6-b6b9-7c742412333e"
+      "webhookId": "73df8436-4a63-4590-b553-72b89f142d4e"
     },
     {
       "parameters": {
         "resource": "fileFolder",
-        "queryString": "={{ $('Webhook').item.json.body.rollNo + '_' + $('Webhook').item.json.body.name }}",
+        "queryString": "={{ $('Webhook').item.json.body.rollNo }}",
+        "limit": 1,
         "filter": {
           "folderId": {
             "__rl": true,
@@ -34,7 +36,7 @@
         },
         "options": {}
       },
-      "id": "12b9cfef-7a05-41f6-b148-9c5ddf5d0e62",
+      "id": "22388634-589a-4a71-af19-0546053e27b5",
       "name": "Search files and folders",
       "type": "n8n-nodes-base.googleDrive",
       "typeVersion": 3,
@@ -45,7 +47,7 @@
       "alwaysOutputData": true,
       "credentials": {
         "googleDriveOAuth2Api": {
-          "id": "NHLEz5UJFsUrvIxM",
+          "id": "AftOchMRqqugtkrv",
           "name": "Google Drive account"
         }
       }
@@ -75,7 +77,7 @@
         },
         "options": {}
       },
-      "id": "19067018-7ae5-430d-bd26-759dea8ac447",
+      "id": "98ec6d55-4b8c-4765-925f-1584af9435d6",
       "name": "If",
       "type": "n8n-nodes-base.if",
       "typeVersion": 2.3,
@@ -86,22 +88,22 @@
     },
     {
       "parameters": {
-        "name": "={{ $('Webhook').item.json.body.rollNo + '_' + $('Webhook').item.json.body.name + '.zip' }}",
+        "name": "={{ $('Webhook').item.json.body.rollNo + '_' + $('Webhook').item.json.body.name + '_Assignment_' + $('Webhook').item.json.body.assignmentNo + '.zip' }}",
         "driveId": {
           "__rl": true,
-          "mode": "list",
           "value": "My Drive",
+          "mode": "list",
           "cachedResultName": "My Drive",
           "cachedResultUrl": "https://drive.google.com/drive/my-drive"
         },
         "folderId": {
           "__rl": true,
-          "value": "={{ $('Search files and folders').item.json.id || $('Create Student Folder').item.json.id }}",
+          "value": "={{ $('Search files and folders').first().json.id }}",
           "mode": "id"
         },
         "options": {}
       },
-      "id": "7b767b18-68ce-4267-af4f-64f88f430e61",
+      "id": "f9c740b8-3d58-4a86-ade2-c1d5c426c232",
       "name": "Upload Assignment ZIP",
       "type": "n8n-nodes-base.googleDrive",
       "typeVersion": 3,
@@ -111,7 +113,7 @@
       ],
       "credentials": {
         "googleDriveOAuth2Api": {
-          "id": "NHLEz5UJFsUrvIxM",
+          "id": "AftOchMRqqugtkrv",
           "name": "Google Drive account"
         }
       }
@@ -140,7 +142,8 @@
             "Roll No": "={{ $('Edit Fields').item.json.body.rollNo }}",
             "Folder Link": "={{ $('Upload Assignment ZIP').item.json.webViewLink }}",
             "Email": "={{ $('Edit Fields').item.json.body.email }}",
-            "Status": "Submitted"
+            "Status": "={{ \n  new Date() > new Date('2026-10-03T00:00:00+05:00') \n    ? 'Late' \n    : 'Submitted' \n}}",
+            "Assignment No.": "={{ $('Webhook').item.json.body.assignmentNo }}"
           },
           "matchingColumns": [],
           "schema": [
@@ -161,6 +164,16 @@
               "display": true,
               "type": "string",
               "canBeUsedToMatch": true
+            },
+            {
+              "id": "Assignment No.",
+              "displayName": "Assignment No.",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
             },
             {
               "id": "Folder Link",
@@ -195,7 +208,7 @@
         },
         "options": {}
       },
-      "id": "0b7c56b6-16ad-4eb5-82f9-86fa2f948f09",
+      "id": "69613087-3d77-42be-8207-a1536da5956d",
       "name": "Update Google Sheet",
       "type": "n8n-nodes-base.googleSheets",
       "typeVersion": 4,
@@ -214,10 +227,10 @@
       "parameters": {
         "sendTo": "={{ $('Webhook').item.json.body.email }}",
         "subject": "=Assignment Submission Confirmed - {{ $json['Name '] }} - {{ $json['Roll No'] }}",
-        "message": "=<div style=\"font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #0f172a; padding: 30px; border-radius: 12px; color: #f8fafc; max-width: 600px; margin: 0 auto; border: 1px solid #334155;\">   <div style=\"text-align: center; padding-bottom: 20px; border-bottom: 1px solid #334155;\">     <h2 style=\"color: #38bdf8; margin: 0; font-size: 24px;\">🎉 Assignment Received!</h2>     <p style=\"color: #94a3b8; margin-top: 5px; font-size: 14px;\">Your submission has been safely logged in our system.</p>   </div>      <div style=\"padding: 20px 0;\">     <p style=\"font-size: 15px; color: #cbd5e1; margin-bottom: 15px;\">Hello <b>{{ $('Webhook').item.json.body.name }}</b>,</p>     <p style=\"font-size: 14px; color: #cbd5e1; line-height: 1.6;\">Thank you for submitting your project. We have successfully received your assignment file and recorded your submission details.</p>          <div style=\"background-color: #1e293b; padding: 18px; border-radius: 8px; margin: 20px 0; border-left: 4px solid #38bdf8;\">       <p style=\"margin: 4px 0; font-size: 14px;\"><b>Student Name:</b> {{ $('Webhook').item.json.body.name }}</p>       <p style=\"margin: 4px 0; font-size: 14px;\"><b>Roll Number:</b> {{ $('Webhook').item.json.body.rollNo }}</p>       <p style=\"margin: 4px 0; font-size: 14px;\"><b>Status:</b> <span style=\"color: #4ade80; font-weight: bold;\">Verified & Saved</span></p>     </div>   </div>    <div style=\"text-align: center; border-top: 1px solid #334155; padding-top: 20px; color: #64748b; font-size: 12px;\">     <p>This is an automated notification. Please do not reply directly to this email.</p>   </div> </div>",
+        "message": "=<div style=\"font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #0f172a; padding: 30px; border-radius: 12px; color: #f8fafc; max-width: 600px; margin: 0 auto; border: 1px solid #334155;\">\n  <div style=\"text-align: center; padding-bottom: 20px; border-bottom: 1px solid #334155;\">\n    <h2 style=\"color: #38bdf8; margin: 0; font-size: 24px;\">🎉 Assignment #{{ $json['Assignment No.'] }} Received!</h2>\n    <p style=\"color: #94a3b8; margin-top: 5px; font-size: 14px;\">Your submission has been safely logged in our system.</p>\n  </div>\n  \n  <div style=\"padding: 20px 0;\">\n    <p style=\"font-size: 15px; color: #cbd5e1; margin-bottom: 15px;\">Hello <b>{{ $('Webhook').item.json.body.name }}</b>,</p>\n    <p style=\"font-size: 14px; color: #cbd5e1; line-height: 1.6;\">Thank you for submitting your project. We have successfully received your assignment file and recorded your submission details.</p>\n    \n    <div style=\"background-color: #1e293b; padding: 18px; border-radius: 8px; margin: 20px 0; border-left: 4px solid #38bdf8;\">\n      <p style=\"margin: 4px 0; font-size: 14px;\"><b>Assignment No:</b> {{ $json['Assignment No.'] }}</p>\n      <p style=\"margin: 4px 0; font-size: 14px;\"><b>Student Name:</b> {{ $('Webhook').item.json.body.name }}</p>\n      <p style=\"margin: 4px 0; font-size: 14px;\"><b>Roll Number:</b> {{ $('Webhook').item.json.body.rollNo }}</p>\n      <p style=\"margin: 4px 0; font-size: 14px;\"><b>Status:</b> <span style=\"color: #4ade80; font-weight: bold;\">Verified & Saved</span></p>\n    </div>\n  </div>\n  \n  <div style=\"text-align: center; border-top: 1px solid #334155; padding-top: 20px; color: #64748b; font-size: 12px;\">\n    <p>This is an automated notification. Please do not reply directly to this email.</p>\n  </div>\n</div>",
         "options": {}
       },
-      "id": "79b53915-eb6f-4573-a4e7-3c64f9904ffd",
+      "id": "c910551b-b9e0-42ac-9ee5-21f3463a8411",
       "name": "Send a message",
       "type": "n8n-nodes-base.gmail",
       "typeVersion": 2.2,
@@ -225,7 +238,7 @@
         1616,
         0
       ],
-      "webhookId": "f202ddea-d09d-4f1b-800e-f4cd4bbe4a39",
+      "webhookId": "458dbe4d-bba6-4745-a433-5c963c43c34e",
       "credentials": {
         "gmailOAuth2": {
           "id": "71QnetDkolFRyEtJ",
@@ -253,7 +266,7 @@
         },
         "options": {}
       },
-      "id": "0dd08beb-ca45-4b99-b054-0e71667c081c",
+      "id": "1eaabbfc-b55e-472e-8254-bcb6ae527492",
       "name": "Create Student Folder",
       "type": "n8n-nodes-base.googleDrive",
       "typeVersion": 3,
@@ -263,7 +276,7 @@
       ],
       "credentials": {
         "googleDriveOAuth2Api": {
-          "id": "NHLEz5UJFsUrvIxM",
+          "id": "AftOchMRqqugtkrv",
           "name": "Google Drive account"
         }
       }
@@ -272,10 +285,10 @@
       "parameters": {
         "sendTo": "mtahaarshad03@gmail.com",
         "subject": "={{ \"New Submission: \" + $('Webhook').item.json.body.name + \" (\" + $('Webhook').item.json.body.rollNo + \")\" }}",
-        "message": "=<div style=\"font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #0f172a; padding: 30px; border-radius: 12px; color: #f8fafc; max-width: 600px; margin: 0 auto; border: 1px solid #334155;\">\n  <div style=\"text-align: center; padding-bottom: 20px; border-bottom: 1px solid #334155;\">\n    <h2 style=\"color: #f43f5e; margin: 0; font-size: 24px;\">📥 New Assignment Submission</h2>\n    <p style=\"color: #94a3b8; margin-top: 5px; font-size: 14px;\">A new submission has been processed automatically.</p>\n  </div>\n  \n  <div style=\"padding: 20px 0;\">\n    <table style=\"width: 100%; border-collapse: collapse; font-size: 14px; color: #e2e8f0;\">\n      <tr>\n        <td style=\"padding: 8px 0; color: #94a3b8; font-weight: bold;\">Student Name:</td>\n        <td style=\"padding: 8px 0;\">{{ $('Webhook').item.json.body.name }}</td>\n      </tr>\n      <tr>\n        <td style=\"padding: 8px 0; color: #94a3b8; font-weight: bold;\">Roll Number:</td>\n        <td style=\"padding: 8px 0;\">{{ $('Webhook').item.json.body.rollNo }}</td>\n      </tr>\n      <tr>\n        <td style=\"padding: 8px 0; color: #94a3b8; font-weight: bold;\">Student Email:</td>\n        <td style=\"padding: 8px 0; color: #38bdf8;\">{{ $('Webhook').item.json.body.email }}</td>\n      </tr>\n    </table>\n\n    <div style=\"margin-top: 25px; text-align: center;\">\n      <a href=\"{{ $('Upload Assignment ZIP').item.json.webViewLink }}\" style=\"background: linear-gradient(135deg, #0284c7, #2563eb); color: #ffffff; padding: 12px 24px; text-decoration: none; border-radius: 8px; font-weight: bold; display: inline-block;\">📁 Open File in Google Drive</a>\n    </div>\n  </div>\n</div>",
+        "message": "=<div style=\"font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #0f172a; padding: 30px; border-radius: 12px; color: #f8fafc; max-width: 600px; margin: 0 auto; border: 1px solid #334155;\">\n  <div style=\"text-align: center; padding-bottom: 20px; border-bottom: 1px solid #334155;\">\n    <h2 style=\"color: #f43f5e; margin: 0; font-size: 24px;\">📥 New Assignment Submission</h2>\n    <p style=\"color: #94a3b8; margin-top: 5px; font-size: 14px;\">A new submission has been processed automatically.</p>\n  </div>\n  \n  <div style=\"padding: 20px 0;\">\n    <table style=\"width: 100%; border-collapse: collapse; font-size: 14px; color: #e2e8f0;\">\n      <tr>\n        <td style=\"padding: 8px 0; color: #94a3b8; font-weight: bold;\">Assignment No:</td>\n        <td style=\"padding: 8px 0; font-weight: bold; color: #38bdf8;\">{{ $('Update Google Sheet').item.json['Assignment No.'] }}</td>\n      </tr>\n      <tr>\n        <td style=\"padding: 8px 0; color: #94a3b8; font-weight: bold;\">Student Name:</td>\n        <td style=\"padding: 8px 0;\">{{ $('Webhook').item.json.body.name }}</td>\n      </tr>\n      <tr>\n        <td style=\"padding: 8px 0; color: #94a3b8; font-weight: bold;\">Roll Number:</td>\n        <td style=\"padding: 8px 0;\">{{ $('Webhook').item.json.body.rollNo }}</td>\n      </tr>\n      <tr>\n        <td style=\"padding: 8px 0; color: #94a3b8; font-weight: bold;\">Student Email:</td>\n        <td style=\"padding: 8px 0; color: #38bdf8;\">{{ $('Webhook').item.json.body.email }}</td>\n      </tr>\n    </table>\n\n    <div style=\"margin-top: 25px; text-align: center;\">\n      <a href=\"{{ $('Upload Assignment ZIP').item.json.webViewLink }}\" style=\"background: linear-gradient(135deg, #0284c7, #2563eb); color: #ffffff; padding: 12px 24px; text-decoration: none; border-radius: 8px; font-weight: bold; display: inline-block;\">📁 Open File in Google Drive</a>\n    </div>\n  </div>\n</div>",
         "options": {}
       },
-      "id": "5da7f150-49ea-4a46-b12d-6fac9616e516",
+      "id": "c7237390-eaba-4341-b14a-75968b523851",
       "name": "Send a message1",
       "type": "n8n-nodes-base.gmail",
       "typeVersion": 2.2,
@@ -283,7 +296,7 @@
         1856,
         0
       ],
-      "webhookId": "5894fd1c-e009-4ae2-99e2-b64f11cccec2",
+      "webhookId": "0abc7a08-c7c8-4bfb-bb49-b39a75b55e87",
       "credentials": {
         "gmailOAuth2": {
           "id": "71QnetDkolFRyEtJ",
@@ -312,7 +325,7 @@
         208,
         0
       ],
-      "id": "8ac150f5-7a8c-4f69-9bcd-2248468fbfde",
+      "id": "d881daf1-12b2-444f-b8b7-2f3bba0dc885",
       "name": "Edit Fields"
     },
     {
@@ -336,7 +349,7 @@
         1104,
         256
       ],
-      "id": "32463f8b-fccc-46d1-96d2-ee0ab1c427e5",
+      "id": "0a0919bf-82aa-4868-baa5-7d7b8fe0a980",
       "name": "Edit Fields1"
     },
     {
@@ -360,7 +373,7 @@
         1120,
         448
       ],
-      "id": "e01f8de8-ab12-49e5-bb65-1c9f1a68d368",
+      "id": "25087383-6b2c-4d10-9ba3-93c54d58acb1",
       "name": "Edit Fields2"
     }
   ],
@@ -490,12 +503,12 @@
     "binaryMode": "separate",
     "availableInMCP": false
   },
-  "versionId": "c8133620-e6ce-4bae-b317-8d0bef0cf098",
+  "versionId": "2d95224c-67bc-4c4a-9030-3147a7b27bcc",
   "meta": {
     "templateCredsSetupCompleted": true,
     "instanceId": "f2b7c8ddeaef4ff91d32056599548698cbf5b45f7bf26d75a4171d9df10ee73e"
   },
   "nodeGroups": [],
-  "id": "u60p8eyMWJjhgd98",
+  "id": "W1mEPDQB3WVPTOBu",
   "tags": []
 }
